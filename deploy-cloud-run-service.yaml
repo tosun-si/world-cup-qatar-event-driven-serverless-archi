@@ -1,0 +1,20 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    script: |
+      docker build -f services/world_cup_stats_raw_to_domain_service/Dockerfile -t $SERVICE_NAME_RAW_TO_DOMAIN .
+      docker tag $SERVICE_NAME_RAW_TO_DOMAIN $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_RAW_TO_DOMAIN:$IMAGE_TAG
+      docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_RAW_TO_DOMAIN:$IMAGE_TAG
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'LOCATION=$LOCATION'
+      - 'REPO_NAME=$_REPO_NAME'
+      - 'SERVICE_NAME_RAW_TO_DOMAIN=$_SERVICE_NAME_RAW_TO_DOMAIN'
+      - 'IMAGE_TAG=$_IMAGE_TAG'
+  - name: google/cloud-sdk:429.0.0
+    args: [ './scripts/deploy_cloud_run_service.sh' ]
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'LOCATION=$LOCATION'
+      - 'REPO_NAME=$_REPO_NAME'
+      - 'SERVICE_NAME_RAW_TO_DOMAIN=$_SERVICE_NAME_RAW_TO_DOMAIN'
+      - 'IMAGE_TAG=$_IMAGE_TAG'
