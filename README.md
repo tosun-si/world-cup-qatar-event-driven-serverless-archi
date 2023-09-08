@@ -77,7 +77,50 @@ gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
 gcloud builds submit \
   --project=$PROJECT_ID \
   --region=$LOCATION \
-  --config deploy-cloud-run-service.yaml \
+  --config deploy-raw-to-domain-cloud-run-service.yaml \
   --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_RAW_TO_DOMAIN="$SERVICE_NAME_RAW_TO_DOMAIN",_IMAGE_TAG="$IMAGE_TAG" \
+  --verbosity="debug" .
+```
+
+### Add Fifa Ranking to team stats
+
+#### Build Docker image
+
+```bash
+docker build -f services/world_cup_team_add_fifa_ranking_service/Dockerfile -t $SERVICE_NAME_RAW_TO_DOMAIN .
+docker tag $SERVICE_NAME_RAW_TO_DOMAIN $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_RAW_TO_DOMAIN:$IMAGE_TAG
+docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_RAW_TO_DOMAIN:$IMAGE_TAG
+```
+
+#### Deploy service
+
+```bash
+gcloud run deploy "$SERVICE_NAME_RAW_TO_DOMAIN" \
+  --image "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_RAW_TO_DOMAIN:$IMAGE_TAG" \
+  --region="$LOCATION" \
+  --no-allow-unauthenticated \
+  --set-env-vars PROJECT_ID="$PROJECT_ID"
+```
+
+#### Create Event Arc Trigger on Service
+
+```bash
+gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
+  --destination-run-service="$SERVICE_NAME_RAW_TO_DOMAIN" \
+  --destination-run-region="$LOCATION" \
+  --location="$LOCATION" \
+  --event-filters="type=google.cloud.storage.object.v1.finalized" \
+  --event-filters="bucket=event-driven-services-qatar-fifa-world-cup-stats-raw" \
+  --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com
+```
+
+#### Deploy the service and create the Event Arc Trigger with Cloud Build
+
+```bash
+gcloud builds submit \
+  --project=$PROJECT_ID \
+  --region=$LOCATION \
+  --config deploy-add-fifa-ranking-to-stats-cloud-run-service.yaml \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS",_IMAGE_TAG="$IMAGE_TAG" \
   --verbosity="debug" .
 ```

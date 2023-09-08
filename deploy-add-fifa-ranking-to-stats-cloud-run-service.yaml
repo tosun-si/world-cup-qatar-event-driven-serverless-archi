@@ -1,0 +1,20 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    script: |
+      docker build -f services/world_cup_team_add_fifa_ranking_service/Dockerfile -t $SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS .
+      docker tag $SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS:$IMAGE_TAG
+      docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS:$IMAGE_TAG
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'LOCATION=$LOCATION'
+      - 'REPO_NAME=$_REPO_NAME'
+      - 'SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS=$_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS'
+      - 'IMAGE_TAG=$_IMAGE_TAG'
+  - name: google/cloud-sdk:429.0.0
+    args: [ './scripts/deploy_add_fifa_ranking_to_stats_cloud_run_service.sh' ]
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'LOCATION=$LOCATION'
+      - 'REPO_NAME=$_REPO_NAME'
+      - 'SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS=$_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS'
+      - 'IMAGE_TAG=$_IMAGE_TAG'

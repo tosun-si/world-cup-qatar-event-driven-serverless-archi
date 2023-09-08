@@ -18,8 +18,16 @@ gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
   --destination-run-service="$SERVICE_NAME_RAW_TO_DOMAIN" \
   --destination-run-region="$LOCATION" \
   --location="$LOCATION" \
-  --event-filters="type=google.cloud.audit.log.v1.written" \
-  --event-filters="serviceName=storage.googleapis.com" \
-  --event-filters="methodName=storage.objects.create" \
-  --event-filters-path-pattern="resourceName=/projects/_/buckets/event-driven-services-qatar-fifa-world-cup-stats-raw/input/stats/*.json" \
+  --event-filters="type=google.cloud.storage.object.v1.finalized" \
+  --event-filters="bucket=event-driven-services-qatar-fifa-world-cup-stats-raw" \
   --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com
+
+#gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
+#  --destination-run-service="$SERVICE_NAME_RAW_TO_DOMAIN" \
+#  --destination-run-region="$LOCATION" \
+#  --location="$LOCATION" \
+#  --event-filters="type=google.cloud.audit.log.v1.written" \
+#  --event-filters="serviceName=storage.googleapis.com" \
+#  --event-filters="methodName=storage.objects.create" \
+#  --event-filters-path-pattern="resourceName=/projects/_/buckets/event-driven-services-qatar-fifa-world-cup-stats-raw/input/stats/*.json" \
+#  --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com

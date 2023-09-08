@@ -19,7 +19,7 @@ class Response(BaseModel):
 
 
 @app.post("/")
-async def teams_league_service(request: Request):
+async def raw_to_domain_data_and_upload_to_gcs_service(request: Request):
     headers = request.headers
 
     input_bucket = headers["ce-bucket"]

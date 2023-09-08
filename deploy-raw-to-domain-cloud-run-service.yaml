@@ -11,7 +11,7 @@ steps:
       - 'SERVICE_NAME_RAW_TO_DOMAIN=$_SERVICE_NAME_RAW_TO_DOMAIN'
       - 'IMAGE_TAG=$_IMAGE_TAG'
   - name: google/cloud-sdk:429.0.0
-    args: [ './scripts/deploy_cloud_run_service.sh' ]
+    args: [ './scripts/deploy_raw_to_domain_cloud_run_service.sh' ]
     env:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'LOCATION=$LOCATION'
