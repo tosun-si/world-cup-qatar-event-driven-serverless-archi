@@ -28,9 +28,10 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
     raw_source_object = "input/stats/world_cup_team_players_stats_raw_ndjson.json"
     domain_source_bucket = "event-driven-services-qatar-fifa-world-cup-stats"
     domain_source_object = "input/stats/world_cup_team_players_stats_domain.json"
-    dest_bucket = "event-driven-services-qatar-fifa-world-cup-stats-raw"
-    raw_dest_object = "input/raw"
-    domain_dest_object = "input/domain"
+
+    dest_bucket = "event-driven-services-qatar-fifa-world-cup-stats-cold"
+    raw_dest_object = "input/raw/world_cup_team_players_stats_raw_ndjson.json"
+    domain_dest_object = "input/domain/world_cup_team_players_stats_domain.json"
 
     success_message = ""
 
@@ -57,7 +58,6 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
         print("###############################################################")
 
         if bq_dataset == expected_dataset and bq_table.endswith(expected_table) and inserted_rows_bq > 0:
-            print("############################################################### OK #######################")
             storage_client = storage.Client()
 
             move_processed_files(
@@ -77,16 +77,16 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
             )
 
             success_message = (
-                "After successfully inserted the Data to BigQuery, the processed files are moved to a cold bucket"
+                "## After successfully inserted the Data to BigQuery, the processed files are moved to a cold bucket ##"
             )
-
-            print(success_message)
-    except:
-        print("############################################################### KO #######################")
-        success_message = "The event doesn't contains the fields concerning the insertion to the BigQuery table"
-
+    except KeyError as e:
+        success_message = "## The event doesn't contains the fields concerning the insertion to the BigQuery table ##"
         pass
+    except Exception as e:
+        print(e)
+        raise e
 
+    print(success_message)
     return success_message, 200
 
 
@@ -100,12 +100,12 @@ def move_processed_files(
     source_blob = source_bucket.blob(source_object)
     destination_bucket = storage_client.bucket(dest_bucket)
 
-    destination_generation_match_precondition = 0
-
     blob_copy = source_bucket.copy_blob(
-        source_blob, destination_bucket, dest_object, if_generation_match=destination_generation_match_precondition,
+        blob=source_blob,
+        destination_bucket=destination_bucket,
+        new_name=dest_object
     )
-    source_bucket.delete_blob(source_blob)
+    source_bucket.delete_blob(source_object)
 
     print(
         "Blob {} in bucket {} moved to blob {} in bucket {}.".format(
