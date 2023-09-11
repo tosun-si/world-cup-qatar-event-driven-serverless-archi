@@ -29,5 +29,5 @@ gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
 #  --event-filters="type=google.cloud.audit.log.v1.written" \
 #  --event-filters="serviceName=storage.googleapis.com" \
 #  --event-filters="methodName=storage.objects.create" \
-#  --event-filters-path-pattern="resourceName=/projects/_/buckets/event-driven-services-qatar-fifa-world-cup-stats-raw/input/stats/*.json" \
+#  --event-filters-path-pattern="resourceName=/projects/_/buckets/event-driven-services-qatar-fifa-world-cup-stats-raw/objects/input/stats/*.json" \
 #  --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com

@@ -4,7 +4,6 @@ from typing import List
 import uvicorn
 from fastapi import FastAPI, Request
 from google.cloud import storage
-from pydantic import BaseModel
 from toolz.curried import pipe
 
 from services.world_cup_stats_raw_to_domain_service.domain.team_player_stats import TeamPlayerStats
@@ -12,10 +11,6 @@ from services.world_cup_stats_raw_to_domain_service.domain.team_player_stats_map
     to_team_player_stats_as_ndjson_string
 
 app = FastAPI()
-
-
-class Response(BaseModel):
-    message: str
 
 
 @app.post("/")
@@ -51,7 +46,7 @@ async def raw_to_domain_data_and_upload_to_gcs_service(request: Request):
     success_message = "#######The GCS file for players stats domain data was correctly uploaded to the GCS#######"
     print(success_message)
 
-    return Response(message=success_message)
+    return success_message, 200
 
 
 if __name__ == "__main__":

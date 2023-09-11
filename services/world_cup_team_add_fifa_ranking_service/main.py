@@ -4,16 +4,11 @@ from typing import Dict, List
 from fastapi import FastAPI, Request
 from google.api_core.exceptions import ClientError
 from google.cloud import storage, bigquery
-from pydantic import BaseModel
 
 from services.world_cup_team_add_fifa_ranking_service.domain.team_player_stats_with_fifa_ranking_mapper import \
     to_stats_domain_dicts_with_fifa_ranking
 
 app = FastAPI()
-
-
-class Response(BaseModel):
-    message: str
 
 
 @app.post("/")
@@ -70,7 +65,7 @@ async def add_fifa_ranking_to_stats_and_save_to_bq_service(request: Request):
 
         print(success_message)
 
-        return Response(message=success_message)
+        return success_message, 200
     except ClientError as e:
         print(load_job.errors)
         raise e

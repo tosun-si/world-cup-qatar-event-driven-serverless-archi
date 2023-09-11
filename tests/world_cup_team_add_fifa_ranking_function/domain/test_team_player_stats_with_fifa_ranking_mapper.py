@@ -55,9 +55,7 @@ class TestTeamPlayerStatsWithFifaRankingMapper:
         )
 
         try:
-            result = load_job.result()
+            load_job.result()
         except ClientError as e:
             print(load_job.errors)
             raise e
-
-        res = ""

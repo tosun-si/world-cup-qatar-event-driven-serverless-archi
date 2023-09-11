@@ -124,3 +124,16 @@ gcloud builds submit \
   --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS",_IMAGE_TAG="$IMAGE_TAG" \
   --verbosity="debug" .
 ```
+
+### Move processed files to cold bucket
+
+#### Deploy the service and create the Event Arc Trigger with Cloud Build
+
+```bash
+gcloud builds submit \
+  --project=$PROJECT_ID \
+  --region=$LOCATION \
+  --config deploy-move-processed-files-to-cold-service.yaml \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET="$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET",_IMAGE_TAG="$IMAGE_TAG" \
+  --verbosity="debug" .
+```
