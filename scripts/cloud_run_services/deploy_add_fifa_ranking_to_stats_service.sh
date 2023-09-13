@@ -20,4 +20,4 @@ gcloud eventarc triggers create "$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS" \
   --location="$LOCATION" \
   --event-filters="type=google.cloud.storage.object.v1.finalized" \
   --event-filters="bucket=event-driven-services-qatar-fifa-world-cup-stats" \
-  --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com
+  --service-account="$SERVICE_ACCOUNT"

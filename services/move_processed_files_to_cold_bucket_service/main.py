@@ -29,7 +29,7 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
     domain_source_bucket = "event-driven-services-qatar-fifa-world-cup-stats"
     domain_source_object = "input/stats/world_cup_team_players_stats_domain.json"
 
-    dest_bucket = "event-driven-services-qatar-fifa-world-cup-stats-cold"
+    dest_bucket = "event-driven-qatar-fifa-world-cup-stats-cold"
     raw_dest_object = "input/raw/world_cup_team_players_stats_raw_ndjson.json"
     domain_dest_object = "input/domain/world_cup_team_players_stats_domain.json"
 

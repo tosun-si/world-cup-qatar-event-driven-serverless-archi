@@ -21,4 +21,4 @@ gcloud eventarc triggers create "$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKE
   --event-filters="type=google.cloud.audit.log.v1.written" \
   --event-filters="serviceName=bigquery.googleapis.com" \
   --event-filters="methodName=google.cloud.bigquery.v2.JobService.InsertJob" \
-  --service-account=sa-cloud-run-dev@gb-poc-373711.iam.gserviceaccount.com
+  --service-account="$SERVICE_ACCOUNT"

@@ -6,7 +6,9 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
 )
@@ -45,14 +47,14 @@ func moveProcessedFilesToColdBucket(ctx context.Context, e event.Event) error {
 	ExpectedDataset := "qatar_fifa_world_cup"
 	ExpectedTable := "tables/world_cup_team_players_stat"
 
-	//rawSourceBucket := "event-driven-services-qatar-fifa-world-cup-stats-raw"
-	//rawSourceObject := "input/stats/world_cup_team_players_stats_raw_ndjson.json"
-	//domainSourceBucket := "event-driven-services-qatar-fifa-world-cup-stats"
-	//domainSourceObject := "input/stats/world_cup_team_players_stats_domain.json"
-	//
-	//DestBucket := "event-driven-services-qatar-fifa-world-cup-stats-cold"
-	//RawDestObject := "input/raw/world_cup_team_players_stats_raw_ndjson.json"
-	//DomainDestObject := "input/domain/world_cup_team_players_stats_domain.json"
+	rawSourceBucket := "event-driven-functions-qatar-fifa-world-cup-stats-raw"
+	rawSourceObject := "input/stats/world_cup_team_players_stats_raw_ndjson.json"
+	domainSourceBucket := "event-driven-functions-qatar-fifa-world-cup-stats"
+	domainSourceObject := "input/stats/world_cup_team_players_stats_domain.json"
+
+	DestBucket := "event-driven-qatar-fifa-world-cup-stats-cold"
+	RawDestObject := "input/raw/world_cup_team_players_stats_raw_ndjson.json"
+	DomainDestObject := "input/domain/world_cup_team_players_stats_domain.json"
 
 	log.Printf("Event Type: %s", e.Type())
 	log.Printf("Subject: %s", e.Subject())
@@ -67,11 +69,7 @@ func moveProcessedFilesToColdBucket(ctx context.Context, e event.Event) error {
 
 	log.Printf("API Method: %s", logentry.ProtoPayload.MethodName)
 	log.Printf("Resource Name: %s", logentry.ProtoPayload.ResourceName)
-	if v, ok := logentry.ProtoPayload.AuthenticationInfo["principalEmail"]; ok {
-		log.Printf("Principal: %s", v)
-	}
 
-	//gcpProjectId := logentry.LogResource.Labels["project_id"]
 	bqDataset := logentry.LogResource.Labels["dataset_id"]
 	bqTable := logentry.ProtoPayload.ResourceName
 
@@ -85,7 +83,62 @@ func moveProcessedFilesToColdBucket(ctx context.Context, e event.Event) error {
 
 		// Apply the logic here.
 		log.Printf("########## The logic will be invoked #############")
+
+		errMoveRawFileColdBucket := moveFile(
+			rawSourceBucket,
+			rawSourceObject,
+			DestBucket,
+			RawDestObject,
+		)
+
+		if errMoveRawFileColdBucket != nil {
+			ferr := fmt.Errorf("raw.moveFile: %w", errMoveRawFileColdBucket)
+			log.Print(ferr)
+			return ferr
+		}
+
+		errMoveDomainFileColdBucket := moveFile(
+			domainSourceBucket,
+			domainSourceObject,
+			DestBucket,
+			DomainDestObject,
+		)
+
+		if errMoveDomainFileColdBucket != nil {
+			ferr := fmt.Errorf("domain.moveFile: %w", errMoveDomainFileColdBucket)
+			log.Print(ferr)
+			return ferr
+		}
 	}
 
+	return nil
+}
+
+func moveFile(
+	sourceBucket,
+	sourceObject string,
+	destBucket,
+	destObject string) error {
+
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return fmt.Errorf("storage.NewClient: %w", err)
+	}
+	defer client.Close()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	src := client.Bucket(sourceBucket).Object(sourceObject)
+	dst := client.Bucket(destBucket).Object(destObject)
+
+	if _, err := dst.CopierFrom(src).Run(ctx); err != nil {
+		return fmt.Errorf("Object(%q).CopierFrom(%q).Run: %w", destObject, sourceObject, err)
+	}
+	if err := src.Delete(ctx); err != nil {
+		return fmt.Errorf("Object(%q).Delete: %w", sourceObject, err)
+	}
+	log.Printf("Blob %v moved to %v.\n", sourceObject, destObject)
 	return nil
 }

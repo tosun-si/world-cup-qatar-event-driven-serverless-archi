@@ -5,6 +5,18 @@ deployment of service is done with FastApi and Uvicorn.
 
 ## Use case with Cloud Functions
 
+### Deploy all the Cloud Functions
+
+```bash
+gcloud builds submit \
+--project=$PROJECT_ID \
+--region=$LOCATION \
+--config deploy-all-cloud-functions.yaml \
+--substitutions _SERVICE_ACCOUNT_CLOUD_FUNCTIONS="$SERVICE_ACCOUNT_CLOUD_FUNCTIONS" \
+--verbosity="debug" .
+```
+
+
 ### Deploy the Cloud Function that map raw data to domain data and upload the result to GCS
 
 ```bash
@@ -41,6 +53,7 @@ gcloud functions deploy qatar-world-cup-add-fifa-ranking-to-stats-domain-bq \
 
 ```bash
 gcloud functions deploy qatar-world-cup-move-processed-files-to-cold-bucket \
+  --quiet \
   --gen2 \
   --region=europe-west1 \
   --runtime=go121 \
@@ -55,6 +68,17 @@ gcloud functions deploy qatar-world-cup-move-processed-files-to-cold-bucket \
 ````
 
 ## Use case with Cloud Run Services
+
+### Deploy all the services
+
+```bash
+gcloud builds submit \
+  --project=$PROJECT_ID \
+  --region=$LOCATION \
+  --config deploy-all-cloud-run-service.yaml \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_RAW_TO_DOMAIN="$SERVICE_NAME_RAW_TO_DOMAIN",_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS",_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET="$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET",_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES="$SERVICE_ACCOUNT_CLOUD_RUN_SERVICES",_IMAGE_TAG="$IMAGE_TAG" \
+  --verbosity="debug" .
+```
 
 ### Map raw to domain Data
 
@@ -95,7 +119,7 @@ gcloud builds submit \
   --project=$PROJECT_ID \
   --region=$LOCATION \
   --config deploy-raw-to-domain-cloud-run-service.yaml \
-  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_RAW_TO_DOMAIN="$SERVICE_NAME_RAW_TO_DOMAIN",_IMAGE_TAG="$IMAGE_TAG" \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_RAW_TO_DOMAIN="$SERVICE_NAME_RAW_TO_DOMAIN",_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES="$SERVICE_ACCOUNT_CLOUD_RUN_SERVICES",_IMAGE_TAG="$IMAGE_TAG" \
   --verbosity="debug" .
 ```
 
@@ -138,7 +162,7 @@ gcloud builds submit \
   --project=$PROJECT_ID \
   --region=$LOCATION \
   --config deploy-add-fifa-ranking-to-stats-cloud-run-service.yaml \
-  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS",_IMAGE_TAG="$IMAGE_TAG" \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS",_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES="$SERVICE_ACCOUNT_CLOUD_RUN_SERVICES",_IMAGE_TAG="$IMAGE_TAG" \
   --verbosity="debug" .
 ```
 
@@ -151,6 +175,6 @@ gcloud builds submit \
   --project=$PROJECT_ID \
   --region=$LOCATION \
   --config deploy-move-processed-files-to-cold-service.yaml \
-  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET="$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET",_IMAGE_TAG="$IMAGE_TAG" \
+  --substitutions _REPO_NAME="$REPO_NAME",_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET="$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET",_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES="$SERVICE_ACCOUNT_CLOUD_RUN_SERVICES",_IMAGE_TAG="$IMAGE_TAG" \
   --verbosity="debug" .
 ```

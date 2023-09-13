@@ -1,20 +1,19 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    script: |
-      docker build -f services/move_processed_files_to_cold_bucket_service/Dockerfile -t $SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET .
-      docker tag $SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET:$IMAGE_TAG
-      docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET:$IMAGE_TAG
+    args: [ './scripts/cloud_run_services/build_move_processed_files_to_cold_bucket_image.sh' ]
     env:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'LOCATION=$LOCATION'
       - 'REPO_NAME=$_REPO_NAME'
-      - 'SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET=$_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET'
       - 'IMAGE_TAG=$_IMAGE_TAG'
+      - 'SERVICE_ACCOUNT=$_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES'
+      - 'SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET=$_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET'
   - name: google/cloud-sdk:429.0.0
-    args: [ './scripts/deploy_move_processed_file_to_cold_bucket_service.sh' ]
+    args: [ './scripts/cloud_run_services/deploy_move_processed_files_to_cold_bucket_service.sh' ]
     env:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'LOCATION=$LOCATION'
       - 'REPO_NAME=$_REPO_NAME'
-      - 'SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET=$_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET'
       - 'IMAGE_TAG=$_IMAGE_TAG'
+      - 'SERVICE_ACCOUNT=$_SERVICE_ACCOUNT_CLOUD_RUN_SERVICES'
+      - 'SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET=$_SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET'
