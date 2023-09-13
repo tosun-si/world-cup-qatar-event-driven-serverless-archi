@@ -1,7 +1,14 @@
-# teams-league-cloudrun-service-fastapi
+# world-cup-qatar-event-driven-serverless-archi
 
-Project showing a complete use case with a Cloud Run Service written with a Python module and multiple files. The
-deployment of service is done with FastApi and Uvicorn.
+Project showing a use case with a full Event Driven and Serverless Architecture.\
+The project uses Event Arc and events on GCS and BigQuery.
+
+This project uses real data for players statistics of Qatar Fifa World Cup.\ 
+Transformations are applied to calculate domain data from raw and the result is stored in a BigQuery table.
+
+The use case is executed with Cloud Functions then Cloud Run Services (Python and Go).
+
+At the end of this real world use case, data will be visualized with Looker Studio. 
 
 ## Use case with Cloud Functions
 
