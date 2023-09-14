@@ -14,6 +14,8 @@ gcloud run deploy "$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET" \
 
 echo "############# Creating Event Arc trigger for the Cloud Run service $SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET"
 
+gcloud eventarc triggers delete "$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET" --location="$LOCATION"
+
 gcloud eventarc triggers create "$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET" \
   --destination-run-service="$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKET" \
   --destination-run-region="$LOCATION" \

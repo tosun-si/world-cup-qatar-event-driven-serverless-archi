@@ -14,6 +14,8 @@ gcloud run deploy "$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS" \
 
 echo "############# Creating Event Arc trigger for the Cloud Run service $SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS"
 
+gcloud eventarc triggers delete "$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS" --location="$LOCATION"
+
 gcloud eventarc triggers create "$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS" \
   --destination-run-service="$SERVICE_NAME_ADD_FIFA_RANKING_TO_TEAM_STATS" \
   --destination-run-region="$LOCATION" \

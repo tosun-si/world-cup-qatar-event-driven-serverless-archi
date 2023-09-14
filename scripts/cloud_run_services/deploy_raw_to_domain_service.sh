@@ -14,6 +14,8 @@ gcloud run deploy "$SERVICE_NAME_RAW_TO_DOMAIN" \
 
 echo "############# Creating Event Arc trigger for the Cloud Run service $SERVICE_NAME_RAW_TO_DOMAIN"
 
+gcloud eventarc triggers delete "$SERVICE_NAME_RAW_TO_DOMAIN" --location="$LOCATION"
+
 gcloud eventarc triggers create "$SERVICE_NAME_RAW_TO_DOMAIN" \
   --destination-run-service="$SERVICE_NAME_RAW_TO_DOMAIN" \
   --destination-run-region="$LOCATION" \
