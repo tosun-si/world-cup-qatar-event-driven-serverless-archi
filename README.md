@@ -10,6 +10,8 @@ The use case is executed with Cloud Functions then Cloud Run Services (Python an
 
 At the end of this real world use case, data will be visualized with Looker Studio. 
 
+![qatar_fifa_world_cup_full_event_driven_and_serverless_archi.png](diagram%2Fqatar_fifa_world_cup_full_event_driven_and_serverless_archi.png)
+
 ## Use case with Cloud Functions
 
 ### Deploy all the Cloud Functions
