@@ -22,7 +22,7 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
     print("###############################################################")
 
     expected_dataset = "qatar_fifa_world_cup"
-    expected_table = "tables/world_cup_team_players_stat"
+    expected_table = "tables/world_cup_team_players_stat_sv"
 
     raw_source_bucket = "event-driven-services-qatar-fifa-world-cup-stats-raw"
     raw_source_object = "input/stats/world_cup_team_players_stats_raw_ndjson.json"
