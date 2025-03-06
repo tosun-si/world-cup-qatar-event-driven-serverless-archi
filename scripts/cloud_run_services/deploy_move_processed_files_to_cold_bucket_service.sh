@@ -23,4 +23,5 @@ gcloud eventarc triggers create "$SERVICE_NAME_MOVE_PROCESSED_FILE_TO_COLD_BUCKE
   --event-filters="type=google.cloud.audit.log.v1.written" \
   --event-filters="serviceName=bigquery.googleapis.com" \
   --event-filters="methodName=google.cloud.bigquery.v2.JobService.InsertJob" \
+  --event-filters="resourceName=projects/${PROJECT_ID}/datasets/qatar_fifa_world_cup/tables/world_cup_team_players_stat_sv" \
   --service-account="$SERVICE_ACCOUNT"

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	"strings"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -44,9 +43,6 @@ func init() {
 
 // Function moveProcessedFilesToColdBucket accepts and handles a CloudEvent object
 func moveProcessedFilesToColdBucket(ctx context.Context, e event.Event) error {
-	ExpectedDataset := "qatar_fifa_world_cup"
-	ExpectedTable := "tables/world_cup_team_players_stat"
-
 	rawSourceBucket := "event-driven-functions-qatar-fifa-world-cup-stats-raw"
 	rawSourceObject := "input/stats/world_cup_team_players_stats_raw_ndjson.json"
 	domainSourceBucket := "event-driven-functions-qatar-fifa-world-cup-stats"
@@ -73,13 +69,14 @@ func moveProcessedFilesToColdBucket(ctx context.Context, e event.Event) error {
 	bqDataset := logentry.LogResource.Labels["dataset_id"]
 	bqTable := logentry.ProtoPayload.ResourceName
 
+	log.Printf("########## BigQuery dataset: %s #############", bqDataset)
+	log.Printf("########## BigQuery table: %s #############", bqTable)
+
 	insertedRowBqAsString := logentry.ProtoPayload.Metadata.TableDataChange["insertedRowsCount"].(string)
 
 	insertedRowBq, _ := strconv.Atoi(insertedRowBqAsString)
 
-	if bqDataset == ExpectedDataset &&
-		strings.HasSuffix(bqTable, ExpectedTable) &&
-		insertedRowBq > 0 {
+	if insertedRowBq > 0 {
 
 		// Apply the logic here.
 		log.Printf("########## The logic will be invoked #############")

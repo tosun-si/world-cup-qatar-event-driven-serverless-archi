@@ -21,9 +21,6 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
     print(request.headers)
     print("###############################################################")
 
-    expected_dataset = "qatar_fifa_world_cup"
-    expected_table = "tables/world_cup_team_players_stat_sv"
-
     raw_source_bucket = "event-driven-services-qatar-fifa-world-cup-stats-raw"
     raw_source_object = "input/stats/world_cup_team_players_stats_raw_ndjson.json"
     domain_source_bucket = "event-driven-services-qatar-fifa-world-cup-stats"
@@ -57,7 +54,7 @@ async def move_processed_files_to_cold_bucket_service(request: Request):
         print(inserted_rows_bq)
         print("###############################################################")
 
-        if bq_dataset == expected_dataset and bq_table.endswith(expected_table) and inserted_rows_bq > 0:
+        if inserted_rows_bq > 0:
             storage_client = storage.Client()
 
             move_processed_files(
